@@ -17,10 +17,10 @@ namespace PomodoroCL
 
         public event TimeChangeHandler TimeChanged;
 
-        public void RunClock()
+        public void RunClock(bool run)
         {
-            //clock needs to run forever
-            while (true)
+            //clock needs to be able to run and stop
+            while (run)
             {
                 Thread.Sleep(100);
                 DateTime currentTime = DateTime.Now;
@@ -49,7 +49,6 @@ namespace PomodoroCL
                     this.hour = currentTime.Hour;
                     this.minute = currentTime.Minute;
                     this.second = currentTime.Second;
-
                 }
             }
         }

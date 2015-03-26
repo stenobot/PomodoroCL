@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PomodoroCL
 {
@@ -11,33 +9,36 @@ namespace PomodoroCL
     {
         static void Main(string[] args)
         {
-            Console.WindowWidth = 45;
-            var theClock = new Clock();
+            // keep window width small
+            Console.WindowWidth = 50;
 
+            // create instances of Clock and Pomodoro classes
+            var theClock = new Clock();
             var pomodoro = new Pomodoro();
             
+            // call subscribe method
             pomodoro.Subscribe(theClock);
 
+            // app title
             Console.WriteLine("PomodoroCL - 2015\n");
 
-            Console.WriteLine("Press Enter to start Pomodoro...\n");
+            // keep track of user's goal
+            Console.WriteLine("\nWhat's your goal for this Pomodoro:");
+            string currentPomodoro = Console.ReadLine();
+
+            // keep track of # of Pomodoros
+            Console.WriteLine("\nHow many Pomodoros will it take?");
+            string totalPomodoros = Console.ReadLine();
+
+            // wait for user to press Enter
+            Console.WriteLine("\nGot it. Press any key to start this Pomodoro...\n");
             Console.ReadKey();
 
-            // intro
-            Thread.Sleep(1000);
-            Console.WriteLine("Three...");
-            Thread.Sleep(1000);
-            Console.WriteLine("Two...");
-            Thread.Sleep(1000);
-            Console.WriteLine("One...");
-            Thread.Sleep(1000);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("_____ ____ _______ ____ __   ____ ___  ____\n|   | |  | |  |  | |  | | |  |  | |  | |  | |\n|___| |  | |  |  | |  | |  | |  | |__/ |  | |\n|     |  | |  |  | |  | |  | |  | | |  |  | |\n|     |__| |  |  | |__| |_/  |__| |  | |__| .\n");
-            Console.ForegroundColor = ConsoleColor.White;
-            Thread.Sleep(1000);
+            // run intro
+            pomodoro.RunIntro();
 
-            // run Clock
-            theClock.RunClock();
+            // run the Clock
+            theClock.RunClock(true);
         }
     }
 }

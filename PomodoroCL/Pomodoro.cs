@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace PomodoroCL
 {
@@ -23,8 +24,25 @@ namespace PomodoroCL
         // only set up the timer once per session
         bool setTimer = true;
 
+        public void RunIntro()
+        {
+            Console.WriteLine("Three...");
+            Thread.Sleep(1000);
+            Console.WriteLine("Two...");
+            Thread.Sleep(1000);
+            Console.WriteLine("One...");
+            Thread.Sleep(1000);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(" ___   __   _____   __  __    __   _    __ \n|   | |  | |  |  | |  | | |  |  | |  | |  | |\n|___| |  | |  |  | |  | |  | |  | |__/ |  | |\n|     |  | |  |  | |  | |  | |  | | |  |  | |\n|     |__| |  |  | |__| |_/  |__| |  | |__| x\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            Thread.Sleep(1000);
+        }
+
         public void Subscribe(Clock theClock)
         {
+            // create instance of ASCII art number generator
+            var numbers = new Numbers();
+
             theClock.TimeChanged +=
             (sender, e) =>
             {
@@ -46,12 +64,12 @@ namespace PomodoroCL
                     {
                         string minuteS, secondS;
 
-                        if (minuteCount > 1)
+                        if (minuteCount != 1)
                             minuteS = "s";
                         else
                             minuteS = "";
 
-                        if (secondCount > 1)
+                        if (secondCount != 1)
                             secondS = "s";
                         else
                             secondS = "";
@@ -60,7 +78,6 @@ namespace PomodoroCL
                         Console.WriteLine("{0} minute" + minuteS + ", {1} second" + secondS, minuteCount, secondCount);
 
                         // check second count against the clock
-                        // this will always be true when timer starts
                         if (e.Second != 0) 
                             secondCount = secondCount + (e.Second - previousSecond);
                         else
@@ -71,8 +88,11 @@ namespace PomodoroCL
                         // increment the minute count
                         minuteCount++;
 
-                        // let user know a minute has elapsed
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                        // display minute count using ASCII art
+                        Console.WriteLine(numbers.CreateNumber(minuteCount));
+
+                        // display minute count and actual time
                         if (minuteCount == 1)
                         {
                             Console.WriteLine("One minute has elapsed - {0}:{1}:{2}", 
@@ -82,7 +102,7 @@ namespace PomodoroCL
                         }
                         else
                         {
-                            Console.WriteLine(minuteCount + " minutes have elapsed- {0}:{1}:{2}",
+                            Console.WriteLine(minuteCount + " minutes have elapsed - {0}:{1}:{2}",
                                 e.Hour.ToString(),
                                 e.Minute.ToString(),
                                 e.Second.ToString());
@@ -94,10 +114,15 @@ namespace PomodoroCL
                 }
                 else // the pomodoro length has been reached
                 {
-                    // let the user know
                     Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(numbers.CreateNumber(minuteCount));
                     Console.WriteLine("You're done. Take a break!");
+
+                    // stop the clock
+                    theClock.RunClock(false);
                 }
+
+                // lastly, update previous second variable
                 previousSecond = e.Second;
             };
         }
