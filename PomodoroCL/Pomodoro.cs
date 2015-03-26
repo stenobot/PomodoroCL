@@ -24,6 +24,8 @@ namespace PomodoroCL
         // only set up the timer once per session
         bool setTimer = true;
 
+        bool firstClick = true;
+
         public void RunIntro()
         {
             Console.WriteLine("Three...");
@@ -46,6 +48,13 @@ namespace PomodoroCL
             theClock.TimeChanged +=
             (sender, e) =>
             {
+                if (firstClick)
+                {
+                    // ignore first click so we can start clock at the beginning of a full second
+                    firstClick = false;
+                    return;
+                }
+
                 if (setTimer)
                 {
                     // second count begins at 1
