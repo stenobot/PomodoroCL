@@ -8,23 +8,65 @@ namespace PomodoroCL
 {
     public class Pomodoro
     {
-        // keep track of seconds elapsed
+        // seconds elapsed
         int secondCount;
 
-        // keep track of minutes elapsed
+        // minutes elapsed
         int minuteCount;
 
-        // remember the previous second
+        // initialize current pomodoro
+        int pomodoroCount;
+
+        // the previous second
         // to keep our count in sync with the clock
         int previousSecond;
 
-        // set the length of a pomodoro in minutes
-        private int pomodoroLength = 25;
+        // user's task
+        string currentTask;
 
-        // only set up the timer once per session
+        // how many pomodoros a task will take
+        // string version that user will enter...
+        string totalPomodoros;
+        // ...parsed into int
+        int totalPomodorosNumber;
+
+        // length of a pomodoro in minutes
+        private int pomodoroLength = 2;
+
+       // whether timer has been set at beginning of each pomodoro
         bool setTimer = true;
 
+        // whether first clock tick has happened at beginning of each pomodoro
         bool firstClick = true;
+
+        // whether first run has happened at beginning of task
+        bool firstRun = true;
+
+        public void SetupPomodoros()
+        {
+            // keep track of user's goal
+            Console.WriteLine("\nWhat task to you want to complete?");
+            currentTask = Console.ReadLine();
+
+            // keep track of # of Pomodoros
+            Console.WriteLine("\nHow many pomodoros will it take?");
+            totalPomodoros = Console.ReadLine();
+
+            // confirm, wait for user to press Enter
+            Console.WriteLine("\nOkey dokey. You want to");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(currentTask);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("in");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(totalPomodoros + " pomodoros");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Press any key to start ...\n");
+            Console.ReadKey();
+
+            // parse the string to an int
+            totalPomodorosNumber = int.Parse(totalPomodoros);
+        }
 
         public void RunIntro()
         {
@@ -40,6 +82,15 @@ namespace PomodoroCL
             Thread.Sleep(1000);
         }
 
+        public void ResetPomodoro()
+        {
+            secondCount = 0;
+            minuteCount = 0;
+            previousSecond = 0;
+            setTimer = true;
+            firstClick = true;
+        }
+
         public void Subscribe(Clock theClock)
         {
             // create instance of ASCII art number generator
@@ -48,9 +99,17 @@ namespace PomodoroCL
             theClock.TimeChanged +=
             (sender, e) =>
             {
+                if (firstRun)
+                {
+                    SetupPomodoros();
+                    firstRun = false;
+                }
+
                 if (firstClick)
                 {
-                    // ignore first click so we can start clock at the beginning of a full second
+                    RunIntro();
+                    // don't continue on first click of the clock 
+                    // so we can be sure to start clock at the beginning of a full second
                     firstClick = false;
                     return;
                 }
@@ -123,12 +182,34 @@ namespace PomodoroCL
                 }
                 else // the pomodoro length has been reached
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(numbers.CreateNumber(minuteCount));
-                    Console.WriteLine("You're done. Take a break!");
+                    // increment the pomodoro count
+                    pomodoroCount++;
 
-                    // stop the clock
-                    theClock.RunClock(false);
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    if (pomodoroCount == totalPomodorosNumber)
+                    {
+                        //all done, stop everything
+                        Console.WriteLine("You're done! That was the last pomorodo for:\n");
+                        Console.WriteLine(currentTask);
+                        Console.WriteLine("Press any key to start a new task...");
+                        ResetPomodoro();
+                        firstRun = true;
+                        pomodoroCount = 0;
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        // take a fiver
+                        Console.WriteLine("Pomodoro " + pomodoroCount + " of " + totalPomodorosNumber + " complete. Time for a break.\n");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("Press any key to start the next pomodoro for:");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(currentTask + "\n");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ReadKey();
+                        ResetPomodoro();
+                    }    
                 }
 
                 // lastly, update previous second variable
