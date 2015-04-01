@@ -31,7 +31,7 @@ namespace PomodoroCL
         int totalPomodorosNumber;
 
         // length of a pomodoro in minutes
-        private int pomodoroLength = 2;
+        private int pomodoroLength = 25;
 
        // whether timer has been set at beginning of each pomodoro
         bool setTimer = true;
