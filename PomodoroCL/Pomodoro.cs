@@ -45,7 +45,7 @@ namespace PomodoroCL
         public void SetupPomodoros()
         {
             // keep track of user's goal
-            Console.WriteLine("\nWhat task to you want to complete?");
+            Console.WriteLine("\nWhat task do you want to complete?");
             currentTask = Console.ReadLine();
 
             // keep track of # of Pomodoros
