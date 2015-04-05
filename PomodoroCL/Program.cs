@@ -10,7 +10,7 @@ namespace PomodoroCL
         static void Main(string[] args)
         {
             // keep window width small
-            Console.WindowWidth = 45;
+            Console.WindowWidth = 38;
 
             // create instances of Clock and Pomodoro classes
             var theClock = new Clock();
@@ -24,8 +24,6 @@ namespace PomodoroCL
 
             // run the Clock
             theClock.RunClock(true);
-
-
         }
     }
 }

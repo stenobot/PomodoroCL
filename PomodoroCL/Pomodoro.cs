@@ -52,14 +52,29 @@ namespace PomodoroCL
             Console.WriteLine("\nHow many pomodoros will it take?");
             totalPomodoros = Console.ReadLine();
 
+            // check if the value entered is numeric
+            bool isNumeric = false;
+            int n;
+            isNumeric = int.TryParse(totalPomodoros, out n);
+
+            while (isNumeric == false)
+            {
+                // if the value isn't numeric, ask again and check again 
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nOops, I was expecting a number, \nbut you entered: " + totalPomodoros + "\nPlease try entering a number:\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                totalPomodoros = Console.ReadLine();
+                isNumeric = int.TryParse(totalPomodoros, out n);
+            }
+
             // confirm, wait for user to press Enter
-            Console.WriteLine("\nOkey dokey. You want to");
+            Console.WriteLine("\nGot it. You want to");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(currentTask);
+            Console.WriteLine(currentTask + "\n");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("in");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(totalPomodoros + " pomodoros");
+            Console.WriteLine(totalPomodoros + " pomodoros\n");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Press any key to start ...\n");
             Console.ReadKey();
@@ -68,6 +83,7 @@ namespace PomodoroCL
             totalPomodorosNumber = int.Parse(totalPomodoros);
         }
 
+        // intro runs at the start of every pomodoro
         public void RunIntro()
         {
             Console.WriteLine("Three...");
@@ -77,11 +93,12 @@ namespace PomodoroCL
             Console.WriteLine("One...");
             Thread.Sleep(1000);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(" ___   __   _____   __  __    __   _    __ \n|   | |  | |  |  | |  | | |  |  | |  | |  | |\n|___| |  | |  |  | |  | |  | |  | |__/ |  | |\n|     |  | |  |  | |  | |  | |  | | |  |  | |\n|     |__| |  |  | |__| |_/  |__| |  | |__| x\n");
+            Console.WriteLine(" ___  __  _____  __ __   __  __  __ \n|   ||  ||  |  ||  || | |  ||  ||  ||\n|___||  ||  |  ||  ||  ||  ||__/|  ||\n|    |  ||  |  ||  ||  ||  || | |  ||\n|    |__||  |  ||__||_/ |__||  ||__|x\n");
             Console.ForegroundColor = ConsoleColor.White;
             Thread.Sleep(1000);
         }
 
+        // reset to start a new pomodoro
         public void ResetPomodoro()
         {
             secondCount = 0;
@@ -130,20 +147,22 @@ namespace PomodoroCL
                 {
                     if (secondCount <= 59) // still counting in the current minute
                     {
-                        string minuteS, secondS;
+                        string minuteS, secondS, minuteNum, secondNum;
 
-                        if (minuteCount != 1)
-                            minuteS = "s";
+                        if (minuteCount < 10)
+                            minuteNum = "0{0}";
                         else
-                            minuteS = "";
+                            minuteNum = "{0}";
 
-                        if (secondCount != 1)
-                            secondS = "s";
+                        if (secondCount < 10)
+                            secondNum = "0{1}";
                         else
-                            secondS = "";
+                            secondNum = "{1}";
 
+                        // display the minute and second count
                         Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("{0} minute" + minuteS + ", {1} second" + secondS, minuteCount, secondCount);
+                        Console.WriteLine(minuteNum + ":" + secondNum,
+                            minuteCount, secondCount);
 
                         // check second count against the clock
                         if (e.Second != 0) 
@@ -156,24 +175,43 @@ namespace PomodoroCL
                         // increment the minute count
                         minuteCount++;
 
+                        // create variables to hold the actual hour, minute, and second
+                        string currentHour, currentMinute, currentSecond;
+
+                        // add a 0 if the hour, minute, or second is less than 10
+                        if (e.Hour < 10)
+                            currentHour = "0" + e.Hour.ToString();
+                        else
+                            currentHour = e.Hour.ToString();
+
+                        if (e.Minute < 10)
+                            currentMinute = "0" + e.Minute.ToString();
+                        else
+                            currentMinute = e.Minute.ToString();
+
+                        if (e.Second < 10)
+                            currentSecond = "0" + e.Second.ToString();
+                        else
+                            currentSecond = e.Second.ToString();
+
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         // display minute count using ASCII art
-                        Console.WriteLine(numbers.CreateNumber(minuteCount));
+                        Console.WriteLine("\n" + numbers.CreateNumber(minuteCount) + "\n");
 
                         // display minute count and actual time
                         if (minuteCount == 1)
                         {
-                            Console.WriteLine("One minute has elapsed - {0}:{1}:{2}", 
-                                e.Hour.ToString(),
-                                e.Minute.ToString(),
-                                e.Second.ToString());
+                            Console.WriteLine("One minute has elapsed\nTime: {0}:{1}:{2}\n", 
+                                currentHour,
+                                currentMinute,
+                                currentSecond);
                         }
                         else
                         {
-                            Console.WriteLine(minuteCount + " minutes have elapsed - {0}:{1}:{2}",
-                                e.Hour.ToString(),
-                                e.Minute.ToString(),
-                                e.Second.ToString());
+                            Console.WriteLine(minuteCount + " minutes have elapsed\nTime: {0}:{1}:{2}\n",
+                                currentHour,
+                                currentMinute,
+                                currentSecond);
                         }
 
                         // reset the second count
@@ -190,8 +228,8 @@ namespace PomodoroCL
                     if (pomodoroCount == totalPomodorosNumber)
                     {
                         //all done, stop everything
-                        Console.WriteLine("You're done! That was the last pomorodo for:\n");
-                        Console.WriteLine(currentTask);
+                        Console.WriteLine("\nYou're done! That was the last pomorodo for:\n");
+                        Console.WriteLine(currentTask + "\n");
                         Console.WriteLine("Press any key to start a new task...");
                         ResetPomodoro();
                         firstRun = true;
