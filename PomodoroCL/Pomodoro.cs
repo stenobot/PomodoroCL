@@ -147,7 +147,7 @@ namespace PomodoroCL
                 {
                     if (secondCount <= 59) // still counting in the current minute
                     {
-                        string minuteS, secondS, minuteNum, secondNum;
+                        string minuteNum, secondNum;
 
                         if (minuteCount < 10)
                             minuteNum = "0{0}";
@@ -228,7 +228,7 @@ namespace PomodoroCL
                     if (pomodoroCount == totalPomodorosNumber)
                     {
                         //all done, stop everything
-                        Console.WriteLine("\nYou're done! That was the last pomorodo for:\n");
+                        Console.WriteLine("\nYou're done with:\n");
                         Console.WriteLine(currentTask + "\n");
                         Console.WriteLine("Press any key to start a new task...");
                         ResetPomodoro();
